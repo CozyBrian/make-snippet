@@ -22,7 +22,7 @@ function timeToSeconds(time: string): number {
     return (hours * 3600) + (minutes * 60) + seconds;
 }
 
-async function createSnippet(inputFilePath: string, outputFilePath: string, startTime: string, duration: number, callback: () => void) {
+async function createSnippet(inputFilePath: string, outputFilePath: string, startTime: string, duration: number) {
     return new Promise<void>((resolve, reject) => {
       ffmpeg(inputFilePath)
         .setStartTime(startTime)
@@ -30,7 +30,6 @@ async function createSnippet(inputFilePath: string, outputFilePath: string, star
         .output(outputFilePath)
         .on('end', () => {
           console.log(`Created snippet: ${outputFilePath}`);
-          callback();
           resolve();
         })
         .on('error', (err) => {
@@ -51,7 +50,7 @@ async function main(audioFilePath: string, timestampFilePath: string) {
         const duration = endTime ? timeToSeconds(endTime) - timeToSeconds(startTime) : 1;
       
         const outputFilePath = path.join(__dirname, `/output/${timestamps[i].label}.mp3`);
-        await createSnippet(audioFilePath, outputFilePath, startTime, duration, () => {});
+        await createSnippet(audioFilePath, outputFilePath, startTime, duration);
     }
 }
 
